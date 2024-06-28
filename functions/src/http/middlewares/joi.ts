@@ -12,14 +12,20 @@ import { SchemaLike } from "joi";
  * @param context whether to validate the request body or its query. Defaults to request body
  * @returns a middleware
  */
-export function autoValidate(schema: SchemaLike) {
+export function autoValidate(
+  schema: SchemaLike,
+  context: "body" | "params" | "query" = "body"
+) {
   return (req: Request, _res: Response, next: NextFunction) => {
     try {
-      req.body = validate(req.body, schema);
+      req[context] = validate(req.body, schema);
       next();
     } catch (err) {
       if (err instanceof DataValidationError) {
-        const message = "Your request body is invalid";
+        const message =
+          context === "body"
+            ? "Your request body is invalid"
+            : "Your requests params are invalid";
         throw new ApplicationError(422, message, err.messages);
       }
       throw err;

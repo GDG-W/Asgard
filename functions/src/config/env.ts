@@ -4,10 +4,12 @@ import dotenv from "dotenv";
 
 interface ApplicationEnv {
   database_url: string;
+  database_name: string;
 }
 
 const envSchema: Record<keyof ApplicationEnv, joi.SchemaLike> = {
   database_url: joi.string().uri({ scheme: "postgres" }).required(),
+  database_name: joi.string().required(),
 };
 
 function loadEnv(): ApplicationEnv {
